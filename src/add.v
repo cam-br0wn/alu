@@ -26,6 +26,21 @@ module add (x, y, c_in, sum, c_out, of);
     add_1b adder_32(.A(x[31]), .B(y[31]), .c_in(btw_add[30]), .sum(sum[31]), .c_out(end_carry));
 
     assign c_out = end_carry;
+
+    wire sum_msb;
+    wire a_msb;
+    wire b_msb;
+    wire xor_msb_ab;
+    wire xor_res_msb;
+
+    assign a_msb = x[31];
+    assign b_msb = y[31];
+    assign sum_msb = sum[31];
+    xor_gate xor_ab_(.x(a_msb), .y(b_msb), .z(xor_msb_ab));
+    xor_gate xor_res_msb_(.x(xor_msb_ab), .y(sum_msb), .z(xor_res_msb));
+    assign of = xor_msb_ab;
+
+
     
     // Need to make sure we set our overflow flag based on the end carry and the last bit of the adder
     xor_gate xor_0(.x(btw_add[30]), .y(end_carry), .z(of)); 

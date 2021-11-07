@@ -13,7 +13,7 @@ module mux_8t1_32 (x0, x1, x2, x3, x4, x5, x6, x7, sel, q);
     genvar i;
 
     generate
-        for(i = 0; i < 31; i = i + 1) begin
+        for(i = 0; i < 32; i = i + 1) begin
             mux_8t1 mux_(.b0(x0[i]), .b1(x1[i]), .b2(x2[i]), .b3(x3[i]), .b4(x4[i]), .b5(x5[i]), .b6(x6[i]), .b7(x7[i]), .sel(sel), .q(out[i]));
         end
     endgenerate

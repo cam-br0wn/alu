@@ -2,9 +2,9 @@
 // Cam Brown
 `timescale 1ns/10ps
 
-module alu_1b(A, B, select, carry_in, carry_out, zero_flag, result);
+module alu_1b(A, B, select, carry_out, zero_flag, result);
 
-input A, B, carry_in;
+input A, B;
 input [2:0] select;
 
 output carry_out;

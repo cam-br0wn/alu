@@ -35,13 +35,12 @@ wire [31:0] mux_res;
 
 wire carry_out_res;
 wire overflow_res;
+wire zero_flag_res;
 
 wire add_of;
 wire sub_of;
 wire slt_of;
 wire sltu_of;
-
-wire zf_res;
 
 wire add_cout;
 wire sub_cout;
@@ -150,14 +149,27 @@ assign overflow = overflow_wire;
 // 8-to-1 32-bit mux based on the op-code
 mux_8t1_32 sel_op(.x0(add_sub_mux), .x1(and_res), .x2(or_res), .x3(xor_res), .x4(sll_res), .x5(srl_res), .x6(slt_res), .x7(sltu_res), .sel(sel), .q(mux_res));
 
-assign result = mux_res;
 
 ////////////////////////////
 //// ZERO FLAG HANDLING ////
 ////////////////////////////
 
-zf zf_(.Q(mux_res), .z(zf_res));
-assign zero_flag = zf_res;
+wire [30:0] or_bridge;
+genvar i;
 
+or_gate or_zf(.x(mux_res[0]), .y(mux_res[1]), .z(or_bridge[0]));
+generate
+    for(i = 1; i < 31; i = i + 1) begin
+        or_gate or_zf_(.x(mux_res[i + 1]), .y(or_bridge[i-1]), .z(or_bridge[i]));
+    end
+endgenerate
+
+// if the last wire after the cascade of or gates is 0, then zero flag is 1
+not_gate not_zf(.x(or_bridge[30]), .z(zero_flag_res));
+
+assign zero_flag = zero_flag_res;
+
+// finally, pipe the mux result into result
+assign result = mux_res;
     
 endmodule
